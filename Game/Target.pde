@@ -13,18 +13,18 @@ class Target {
 
   public void drawTarget() {
     calculatePoints();
-    
+
     fill(0);
     strokeWeight(1);
     ellipse(x, y, size, size);
   }
-  
-  private void calculatePoints(){
+
+  private void calculatePoints() {
     List<PVector> pointsList = path.segmentList;
     int segment = segmentProgress % (pointsList.size() - 3);
-    
+
     count++;
-    
+
     //points of curve
     float x0 = pointsList.get(segment).x;
     float y0 = pointsList.get(segment).y;
@@ -34,15 +34,15 @@ class Target {
     float y2 = pointsList.get(segment + 2).y;
     float x3 = pointsList.get(segment + 3).x;
     float y3 = pointsList.get(segment + 3).y;
-    
+
     float t = (count % speed)/speed;
-    
-    if(t > 0.99)
+
+    if (t > 0.99)
       segmentProgress++;
     //IF reached end of path
-    if(segmentProgress == pointsList.size() - 3)
+    if (segmentProgress == pointsList.size() - 3)
       reachedEnd = true;
-    
+
     x = curvePoint(x0, x1, x2, x3, t);
     y = curvePoint(y0, y1, y2, y3, t);
   }

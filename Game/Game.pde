@@ -2,6 +2,7 @@ import java.util.*;
 
 Path path = new Path();
 Set<Target> targets = new HashSet<Target>();
+Set<Tower> towers = new HashSet<Tower>();
 
 void setup() {
   //fullScreen();
@@ -26,6 +27,8 @@ void draw() {
   path.drawPath();
   for (Target target : targets)
     target.drawTarget();
+  for (Tower tower : towers)
+    tower.drawTower();
 
   //removes targets that have reached end of path
   Set<Target> targetsToRemove = new HashSet<Target>();
@@ -35,4 +38,8 @@ void draw() {
       targetsToRemove.add(target);
 
   targets.removeAll(targetsToRemove);
+}
+
+void mouseClicked() {
+  towers.add(new Tower(mouseX, mouseY));
 }
