@@ -1,5 +1,3 @@
-import java.util.List;
-
 class Path {
   private List<PVector> segmentList = new ArrayList<PVector>();//points making up path
   private color pathColor = color(190);
