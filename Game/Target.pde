@@ -21,7 +21,7 @@ class Target {
 
   private void calculatePoints() {
     List<PVector> pointsList = path.segmentList;
-    int segment = segmentProgress % (pointsList.size() - 3);
+    int segment = segmentProgress % (pointsList.size() - 1);
 
     count++;
 
@@ -30,20 +30,16 @@ class Target {
     float y0 = pointsList.get(segment).y;
     float x1 = pointsList.get(segment + 1).x;
     float y1 = pointsList.get(segment + 1).y;
-    float x2 = pointsList.get(segment + 2).x;
-    float y2 = pointsList.get(segment + 2).y;
-    float x3 = pointsList.get(segment + 3).x;
-    float y3 = pointsList.get(segment + 3).y;
 
-    float t = (count % speed)/speed;
+    float amt = (count % speed)/speed;
 
-    if (t > 0.99)
+    if (amt > 0.99)
       segmentProgress++;
     //IF reached end of path
-    if (segmentProgress == pointsList.size() - 3)
+    if (segmentProgress == pointsList.size() - 1)
       reachedEnd = true;
 
-    x = curvePoint(x0, x1, x2, x3, t);
-    y = curvePoint(y0, y1, y2, y3, t);
+    x = lerp(x0, x1, amt);
+    y = lerp(y0, y1, amt);
   }
 }
