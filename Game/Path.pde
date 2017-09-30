@@ -1,7 +1,7 @@
 class Path {
   private List<PVector> segmentList = new ArrayList<PVector>();//points making up path
   private color pathColor = color(190);
-  private float pathWidth = width*0.45;
+  private float pathWidth = width*0.045;
 
   /*
   * adds point to path 

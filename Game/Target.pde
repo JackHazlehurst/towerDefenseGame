@@ -1,7 +1,7 @@
 class Target {
   private Path path;
   private float x, y;
-  private float size = width*0.033;
+  private float size = width*0.018;
   private float speed = 165.0;
   private int segmentProgress = 0;
   private int count = 0;//number of frames since creation of target 
@@ -16,7 +16,7 @@ class Target {
 
     fill(0);
     strokeWeight(1);
-    ellipse(x, y, size, size);
+    ellipse(x, y, 2*size, 2*size);
   }
 
   private void calculatePoints() {

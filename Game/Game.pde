@@ -1,12 +1,16 @@
 import java.util.*;
 
-Path path = new Path();
-Set<Target> targets = new HashSet<Target>();
+Path path;
+List<Target> targets = new ArrayList<Target>();
 Set<Tower> towers = new HashSet<Tower>();
+
+Bullet bullet = new Bullet(100, 100, 6);
 
 void setup() {
   //fullScreen();
   size(960, 540);
+
+  path = new Path();
 
   path.addPoint(0, 0);
   path.addPoint(width*0.2, height*0.2);
@@ -19,6 +23,8 @@ void setup() {
 void draw() {
   background(255);
 
+
+
   //adds new target to path
   if (frameCount % 60 == 0)
     targets.add(new Target(path));
@@ -27,9 +33,22 @@ void draw() {
   path.drawPath();
   for (Target target : targets)
     target.drawTarget();
-  for (Tower tower : towers)
-    tower.drawTower();
 
+  //updates the towers 
+  for (Tower tower : towers)
+    tower.updateTower();
+
+
+
+
+  bullet.drawBullet();
+
+
+
+  removeDead();
+}
+
+void removeDead() {
   //removes targets that have reached end of path
   Set<Target> targetsToRemove = new HashSet<Target>();
 
@@ -41,5 +60,5 @@ void draw() {
 }
 
 void mouseClicked() {
-  towers.add(new Tower(mouseX, mouseY));
+  towers.add(new Tower(mouseX, mouseY, width*0.15, targets));
 }
