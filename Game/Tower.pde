@@ -8,11 +8,17 @@ class Tower {
 
   private Target currentTarget = null;
   private List<Target> targets;
+  private Set<Bullet> bullets;
 
-  public Tower(int x, int y, float range, List<Target> targetList) {
+  //data for bullet creation 
+  private int lastBulletFrame = 0;//last frame a bullet was created 
+  private int bulletFrameRate = 30;//after how many frames should a bullet be created 
+
+  public Tower(int x, int y, float range, List<Target> targetList, Set<Bullet> bulletSet) {
     pos = new PVector(x, y);
     RANGE = range;
     targets = targetList;
+    bullets = bulletSet;
   }
 
   /*
@@ -23,15 +29,26 @@ class Tower {
     //get target and find angle towards it
     currentTarget = selectTarget();
 
-    //only updates direction if something is in range 
+    //only updates direction and creates bullet if something is in range 
     if (currentTarget != null) {
       float dx = pos.x - currentTarget.x;
       float dy = pos.y - currentTarget.y;
 
       direction = atan2(dy, dx);
+      
+      createBullet();
     }
 
     drawTower();
+  }
+
+  private void createBullet() {
+    //IF bullet was created too recently, return 
+    if (frameCount - lastBulletFrame < bulletFrameRate)
+      return;
+      
+    bullets.add(new Bullet(new PVector(pos.x, pos.y), direction));
+    lastBulletFrame = frameCount;
   }
 
   /*
@@ -39,17 +56,19 @@ class Tower {
    */
   private void drawTower() {
     pushMatrix();
+    
     //draw tower
     fill(towerColor);
     noStroke();
     translate(pos.x, pos.y);
     ellipse(0, 0, 2*size, 2*size);
-    
+
     //draw direction indicator 
     stroke(0, 255, 0);
     strokeWeight(4);
     rotate(direction);
     line(0, 0, -size, 0);
+    
     popMatrix();
 
     //draw range if the mouse is hovering over tower 

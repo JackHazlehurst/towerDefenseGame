@@ -3,8 +3,7 @@ import java.util.*;
 Path path;
 List<Target> targets = new ArrayList<Target>();
 Set<Tower> towers = new HashSet<Tower>();
-
-Bullet bullet = new Bullet(100, 100, 6);
+Set<Bullet> bullets = new HashSet<Bullet>();
 
 void setup() {
   //fullScreen();
@@ -33,19 +32,16 @@ void draw() {
   path.drawPath();
   for (Target target : targets)
     target.drawTarget();
+  for (Bullet bullet : bullets)
+    bullet.drawBullet();
 
-  //updates the towers 
+  //updates the towers ie draws, moves, etc... 
   for (Tower tower : towers)
     tower.updateTower();
-
-
-
-
-  bullet.drawBullet();
-
-
-
+    
   removeDead();
+  
+  println(bullets.size());
 }
 
 void removeDead() {
@@ -57,8 +53,18 @@ void removeDead() {
       targetsToRemove.add(target);
 
   targets.removeAll(targetsToRemove);
+  
+  //removes bullets that have gone off screen 
+  Set<Bullet> bulletsToRemove = new HashSet<Bullet>();
+
+  for (Bullet bullet : bullets)
+    if (bullet.offScreen())
+      bulletsToRemove.add(bullet);
+
+  bullets.removeAll(bulletsToRemove);
+  
 }
 
 void mouseClicked() {
-  towers.add(new Tower(mouseX, mouseY, width*0.15, targets));
+  towers.add(new Tower(mouseX, mouseY, width*0.15, targets, bullets));
 }

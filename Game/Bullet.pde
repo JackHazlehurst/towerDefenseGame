@@ -1,30 +1,43 @@
 class Bullet {
-  private int SPEED = 3;
-  private float SIZE = width*0.05;
+  private int SPEED = 10;
+  private float SIZE = width*0.005;
   private float DIRECTION; //angle of movement in radians
   private color BULLET_COLOR = color(255, 50, 50);
 
   private PVector pos; 
 
-  public Bullet(int x, int y, float dir) {
-    pos = new PVector(x, y);
+  public Bullet(PVector position, float dir) {
+    pos = position;
     DIRECTION = dir;
   }
 
   public void drawBullet() {
+    pushMatrix();
+
     //move the bullet 
-    pos.x += SPEED * sin(DIRECTION); 
-    pos.y += SPEED * cos(DIRECTION); 
+    pos.x += SPEED * cos(DIRECTION + PI); 
+    pos.y += SPEED * sin(DIRECTION + PI); 
 
     //draw the bullet 
     noStroke();
     fill(BULLET_COLOR);
 
-    pushMatrix();
     translate(pos.x, pos.y);
-    rotate(-DIRECTION);
+    rotate(DIRECTION + PI/2);
 
     ellipse(0, 0, SIZE, SIZE*4);
+
     popMatrix();
+  }
+
+  /**
+   *  returns true if the bullet is off the screen 
+   */
+  public boolean offScreen() {    
+    if (pos.x < -SIZE || pos.x > width + SIZE || pos.y < -SIZE || pos.y > height + SIZE)
+      return true;
+
+    //bullet still on screen 
+    return false;
   }
 }
