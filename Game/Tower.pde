@@ -47,7 +47,7 @@ class Tower {
     if (frameCount - lastBulletFrame < bulletFrameRate)
       return;
       
-    bullets.add(new Bullet(new PVector(pos.x, pos.y), direction));
+    bullets.add(new Bullet(new PVector(pos.x, pos.y), direction, 15));
     lastBulletFrame = frameCount;
   }
 

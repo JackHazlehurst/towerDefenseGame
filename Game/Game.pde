@@ -6,8 +6,8 @@ Set<Tower> towers = new HashSet<Tower>();
 Set<Bullet> bullets = new HashSet<Bullet>();
 
 void setup() {
-  //fullScreen();
-  size(960, 540);
+  fullScreen();
+  //size(960, 540);
 
   path = new Path();
 
@@ -22,26 +22,23 @@ void setup() {
 void draw() {
   background(255);
 
-
-
   //adds new target to path
   if (frameCount % 60 == 0)
-    targets.add(new Target(path));
+    targets.add(new Target(path)); //<>//
 
-  //draws everything 
+  //updates objects ie draws, moves, etc... 
   path.drawPath();
-  for (Target target : targets)
-    target.drawTarget();
+  
   for (Bullet bullet : bullets)
     bullet.drawBullet();
-
-  //updates the towers ie draws, moves, etc... 
+  
+  for (Target target : targets)
+    target.updateTarget();
+  
   for (Tower tower : towers)
     tower.updateTower();
     
   removeDead();
-  
-  println(bullets.size());
 }
 
 void removeDead() {
@@ -49,7 +46,7 @@ void removeDead() {
   Set<Target> targetsToRemove = new HashSet<Target>();
 
   for (Target target : targets)
-    if (target.reachedEnd)
+    if (target.reachedEnd || target.health < 0)
       targetsToRemove.add(target);
 
   targets.removeAll(targetsToRemove);
@@ -58,7 +55,7 @@ void removeDead() {
   Set<Bullet> bulletsToRemove = new HashSet<Bullet>();
 
   for (Bullet bullet : bullets)
-    if (bullet.offScreen())
+    if (bullet.dead())
       bulletsToRemove.add(bullet);
 
   bullets.removeAll(bulletsToRemove);
