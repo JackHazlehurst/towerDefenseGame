@@ -1,14 +1,23 @@
+//font used for the user interface
+//https://fonts.google.com/specimen/Roboto?selection.family=Roboto
+
 import java.util.*;
 
+UI ui;
 Path path;
+
 List<Target> targets = new ArrayList<Target>();
 Set<Tower> towers = new HashSet<Tower>();
 Set<Bullet> bullets = new HashSet<Bullet>();
 
-void setup() {
-  fullScreen();
-  //size(960, 540);
+int lives = 100;
+int money = 0;
 
+void setup() {
+  //fullScreen();
+  size(960, 540);
+
+  ui = new UI();
   path = new Path();
 
   path.addPoint(0, 0);
@@ -20,7 +29,7 @@ void setup() {
 }
 
 void draw() {
-  background(255);
+  background(207, 191, 102);
 
   //adds new target to path
   if (frameCount % 60 == 0)
@@ -37,6 +46,8 @@ void draw() {
   
   for (Tower tower : towers)
     tower.updateTower();
+    
+  ui.drawUI();
     
   removeDead();
 }
