@@ -74,5 +74,5 @@ void removeDead() {
 }
 
 void mouseClicked() {
-  towers.add(new Tower(mouseX, mouseY, width*0.15, targets, bullets));
+  towers.add(new Tower(mouseX, mouseY, width*0.15, color(0, 0, 255), color(0, 255, 0), targets, bullets));
 }

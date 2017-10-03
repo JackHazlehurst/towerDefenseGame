@@ -4,7 +4,7 @@ class Tower {
   private PVector pos;
   private float direction = 0;
   private float size = width*0.025  ;
-  private color towerColor = color(0, 0, 255);
+  private color towerColor, directionColor;
 
   private Target currentTarget = null;
   private List<Target> targets;
@@ -14,11 +14,13 @@ class Tower {
   private int lastBulletFrame = 0;//last frame a bullet was created 
   private int bulletFrameRate = 30;//after how many frames should a bullet be created 
 
-  public Tower(int x, int y, float range, List<Target> targetList, Set<Bullet> bulletSet) {
+  public Tower(int x, int y, float range, color tower, color direction, List<Target> targetList, Set<Bullet> bulletSet) {
     pos = new PVector(x, y);
     RANGE = range;
     targets = targetList;
     bullets = bulletSet;
+    towerColor = tower;
+    directionColor = direction;
   }
 
   /*
@@ -40,6 +42,9 @@ class Tower {
     }
 
     drawTower();
+    //draw range if the mouse is hovering over tower 
+    if (Math.hypot(pos.x - mouseX, pos.y - mouseY) <= size)
+      drawRange();
   }
 
   private void createBullet() {
@@ -54,7 +59,7 @@ class Tower {
   /*
   * Draws the tower 
    */
-  private void drawTower() {
+  public void drawTower() {
     pushMatrix();
     
     //draw tower
@@ -64,16 +69,12 @@ class Tower {
     ellipse(0, 0, 2*size, 2*size);
 
     //draw direction indicator 
-    stroke(0, 255, 0);
+    stroke(directionColor);
     strokeWeight(4);
     rotate(direction);
     line(0, 0, -size, 0);
     
     popMatrix();
-
-    //draw range if the mouse is hovering over tower 
-    if (Math.hypot(pos.x - mouseX, pos.y - mouseY) <= size)
-      drawRange();
   }
 
   /*
