@@ -2,7 +2,7 @@ class Target {
   private Path path;
   private float x, y;
   private float size = width*0.018;
-  private float speed = 165.0;
+  private float speed = 1;//speed of targets (smaller is faster)
   private float health = 100;
   private int segmentProgress = 0;
   private int count = 0;//number of frames since creation of target 
@@ -68,10 +68,13 @@ class Target {
     float x1 = pointsList.get(segment + 1).x;
     float y1 = pointsList.get(segment + 1).y;
 
-    float amt = (count % speed)/speed;
+    float movementRate = dist(x0, y0, x1, y1) * speed;
+    float amt = (count % movementRate)/movementRate;
 
-    if (amt > 0.99)
+    if (amt > 0.99){
       segmentProgress++;
+      count = 0;//resets count so the target starts at the beginning of the new segment 
+    }
     //IF reached end of path
     if (segmentProgress == pointsList.size() - 1)
       reachedEnd = true;
