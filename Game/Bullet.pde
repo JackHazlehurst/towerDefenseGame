@@ -11,7 +11,7 @@ class Bullet {
   public Bullet(PVector position, float dir, float damage) {
     pos = position;
     DIRECTION = dir;
-    DAMAGE = damage; 
+    DAMAGE = damage;
   }
 
   public void drawBullet() {

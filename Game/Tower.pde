@@ -2,6 +2,7 @@ class Tower {
   private float RANGE;
 
   private PVector pos;
+  private int price;
   private float direction = 0;
   private float size = width*0.025  ;
   private color towerColor, directionColor;
@@ -23,6 +24,14 @@ class Tower {
     directionColor = direction;
   }
 
+  //constructor for drawing the tower model that is not part of gameplay 
+  public Tower(int x, int y, int cost, color tower, color direction) {
+    pos = new PVector(x, y);
+    towerColor = tower;
+    directionColor = direction;
+    price = cost;
+  }
+
   /*
   * Updates the tower each frame ie redraws it 
    * shoots at any targets, etc...
@@ -37,7 +46,7 @@ class Tower {
       float dy = pos.y - currentTarget.y;
 
       direction = atan2(dy, dx);
-      
+
       createBullet();
     }
 
@@ -51,7 +60,7 @@ class Tower {
     //IF bullet was created too recently, return 
     if (frameCount - lastBulletFrame < bulletFrameRate)
       return;
-      
+
     bullets.add(new Bullet(new PVector(pos.x, pos.y), direction, 15));
     lastBulletFrame = frameCount;
   }
@@ -61,7 +70,7 @@ class Tower {
    */
   public void drawTower() {
     pushMatrix();
-    
+
     //draw tower
     fill(towerColor);
     noStroke();
@@ -73,7 +82,7 @@ class Tower {
     strokeWeight(4);
     rotate(direction);
     line(0, 0, -size, 0);
-    
+
     popMatrix();
   }
 

@@ -2,14 +2,16 @@ class Target {
   private Path path;
   private float x, y;
   private float size = width*0.018;
-  private float speed = 1;//speed of targets (smaller is faster)
-  private float health = 100;
+  private float speed;//speed of targets (smaller is faster)
+  private float health;
   private int segmentProgress = 0;
   private int count = 0;//number of frames since creation of target 
   private boolean reachedEnd = false;//flag for target reaching end of path or end of life ie no more health 
 
-  public Target(Path pathToFollow) {
+  public Target(Path pathToFollow, int startingHealth, float targetSpeed) {
     path = pathToFollow;
+    health = startingHealth;
+    speed = targetSpeed;
   }
 
   public void updateTarget() {
@@ -35,6 +37,7 @@ class Target {
       //IF the bullet has hit this target, decrease health and remove bullet 
       if (dist(x, y, bullet.pos.x, bullet.pos.y) < size) {
         health -= bullet.DAMAGE;
+        totalDamage += bullet.DAMAGE;
         bullet.hitTarget = true;
       }
     }
@@ -71,13 +74,15 @@ class Target {
     float movementRate = dist(x0, y0, x1, y1) * speed;
     float amt = (count % movementRate)/movementRate;
 
-    if (amt > 0.99){
+    if (amt > 0.99) {
       segmentProgress++;
-      count = 0;//resets count so the target starts at the beginning of the new segment 
+      count = 0;//resets count so the target starts at the beginning of the new segment
     }
     //IF reached end of path
-    if (segmentProgress == pointsList.size() - 1)
+    if (segmentProgress == pointsList.size() - 1) {
       reachedEnd = true;
+      lives--;
+    }
 
     x = lerp(x0, x1, amt);
     y = lerp(y0, y1, amt);

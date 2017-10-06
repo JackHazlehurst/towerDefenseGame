@@ -3,6 +3,8 @@ public class UI {
   private float UIWidth, UIHeight, UIGap;
   private PFont roboto = createFont("Roboto-Black.ttf", 18);
 
+  private Tower[] towers;
+
   private color background = color(239, 245, 205);
 
   public UI() {
@@ -28,34 +30,57 @@ public class UI {
     text(lives, calcX(width*0.05), calcY(width*0.04));
     //money
     fill(34, 177, 76);
-    text(money, calcX(width*0.05), calcY(width*0.08));
-    
+    text("$ " + money, calcX(width*0.05), calcY(width*0.08));
+
     drawTowersToBuy(width*0.4);
 
     drawButton(width*0.025, width*0.1, "Test");
   }
-  
-  private void drawTowersToBuy(float yPos){
+
+  /**
+   * gets a tower that the user may buy, but a copy of it 
+   */
+  public Tower getTowerAtPos(int x, int y) {
+    for (int i = 0; i < towers.length; i++) {
+      Tower tower = towers[i];
+
+      if (dist(x, y, tower.pos.x, tower.pos.y) < 2*tower.size){
+        Tower toReturn = new Tower((int)tower.pos.x, (int)tower.pos.y, tower.price, tower.towerColor, tower.directionColor);
+        
+        return toReturn;
+      } //<>//
+    }
+
+    return null;
+  }
+
+  private void drawTowersToBuy(float yPos) {
     float x = calcX(UIGap);
     float y = calcY(yPos);
     color divider = color(52, 51, 46);
-    
+
     //draw dividers 
     float sizeS = UIGap/3;
     float sizeL = UIWidth - UIGap*2;
-    
+
     fill(divider);
     //vertical 
     rect(x + sizeL/2 - sizeS/2, y, sizeS, sizeL);
     //horizontal 
     rect(x, y + sizeL/2 - sizeS/2, sizeL, sizeS);
-    
+
     //draw towers 
     float startX = x + sizeL*0.25;
     float startY = y + sizeL*0.25;
-    
-    new Tower((int)startX, (int)startY, 0, color(0, 0, 255), color(0, 255, 0), new ArrayList<Target>(), new HashSet<Bullet>()).drawTower();
-    new Tower((int)(startX + sizeL*0.5), (int)startY, 0, color(255, 0, 0), color(0), new ArrayList<Target>(), new HashSet<Bullet>()).drawTower();
+
+    towers = new Tower[2];
+
+    towers[0] = new Tower((int)startX, (int)startY, 150, color(0, 0, 255), color(0, 255, 0));
+    towers[1] = new Tower((int)(startX + sizeL*0.5), 200, (int)startY, color(255, 0, 0), color(0));
+
+    for (int i = 0; i < towers.length; i++) {
+      towers[i].drawTower();
+    }
   }
 
   private void drawButton(float x, float y, String text) {

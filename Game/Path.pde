@@ -11,7 +11,7 @@ class Path {
   }
 
   public void drawPath() {
-    //cannot draw with less than four points 
+    //cannot draw with less than two points 
     if (segmentList.size() < 2)
       return;
 
@@ -26,5 +26,28 @@ class Path {
       noFill();
       line(x0, y0, x1, y1);
     }
+  }
+
+  public void circleIntersection(float x0, float y0, float x1, float y1, Tower tower) {
+    //line stuff
+    float m = (y1 - y0)/(x1 - x0);
+    float yint = y0 - m*x0;
+
+    float r = tower.size;
+    //tower center 
+    float xc = tower.pos.x;
+    float yc = tower.pos.y;
+
+    float a = 1 + m*m;
+    float b = -2*xc + 2*m*yint - 2*m*yc;
+    float c = xc*xc - 2*yc*yint + yint*yint + yc*yc - r*r;
+
+    //results 
+    float xResult1 = (-b + sqrt(b*b - 4*a*c))/(2*a);
+    float xResult2 = (-b - sqrt(b*b - 4*a*c))/(2*a);
+    float yResult1 = m*xResult1 + c;
+    float yResult2 = m*xResult2 + c;
+
+    println(xResult1, yResult1, xResult2, yResult2);
   }
 }
