@@ -1,5 +1,5 @@
 class Bullet {
-  private int SPEED = 10;
+  private int SPEED;
   private float SIZE = width*0.005;
   private float DAMAGE;
   private float DIRECTION; //angle of movement in radians
@@ -8,10 +8,11 @@ class Bullet {
   private PVector pos; 
   private boolean hitTarget = false;//IF the bullet hits a target then it should be removed 
 
-  public Bullet(PVector position, float dir, float damage) {
+  public Bullet(PVector position, float dir, float damage, int speed) {
     pos = position;
     DIRECTION = dir;
     DAMAGE = damage;
+    SPEED = speed;
   }
 
   public void drawBullet() {

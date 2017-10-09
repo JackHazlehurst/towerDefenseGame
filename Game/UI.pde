@@ -1,8 +1,9 @@
-public class UI {
+public class UI { //<>//
   private PVector pos = new PVector();//top left of ui to use to draw rest of ui relative to this point 
   private float UIWidth, UIHeight, UIGap;
   private PFont roboto = createFont("Roboto-Black.ttf", 18);
 
+  private List<Button> buttonList = new ArrayList<Button>();
   private Tower[] towers;
 
   private color background = color(239, 245, 205);
@@ -13,6 +14,11 @@ public class UI {
     UIWidth = width - pos.x;
     UIHeight = height;
     UIGap = UIWidth*0.1;
+
+    //creates buttons and adds them to a list 
+    buttonList.add(new Button(calcX(width*0.025), calcY(width*0.1), "Speed", 0.5));//upgrade speed
+    buttonList.add(new Button(calcX(width*0.025), calcY(width*0.17), "Damage", 0.5));//upgrade damage
+    buttonList.add(new Button(calcX(width*0.025), calcY(width*0.5), "Next Wave", 0.38));//next wave of targets
   }
 
   public void drawUI() {
@@ -34,7 +40,38 @@ public class UI {
 
     drawTowersToBuy(width*0.4);
 
-    drawButton(width*0.025, width*0.1, "Test");
+    //draws buttons
+    for (Button button : buttonList)
+      button.drawButton();
+  }
+
+  /*
+  * calls appropriate method depenging on the button pressed 
+   */
+  public void clickedButtons(float x, float y) {
+    int buttonClicked = -1; 
+
+    for (int i = 0; i < buttonList.size(); i++) {
+      Button currentButton = buttonList.get(i);
+
+      if (currentButton.buttonClicked(x, y)) {
+        buttonClicked = i;
+        break;
+      }
+    }
+
+    //no button was clicked 
+    if (buttonClicked == -1) return;
+
+    //upgrade speed
+    if (buttonClicked == 0)
+      upgradeSelectedTowerSpeed();
+    //upgrade damage
+    if (buttonClicked == 1)
+      upgradeSelectedTowerDamage();
+    //upgrade damage
+    if (buttonClicked == 2)
+      waveOfTargets();
   }
 
   /**
@@ -44,11 +81,11 @@ public class UI {
     for (int i = 0; i < towers.length; i++) {
       Tower tower = towers[i];
 
-      if (dist(x, y, tower.pos.x, tower.pos.y) < 2*tower.size){
+      if (dist(x, y, tower.pos.x, tower.pos.y) < 2*tower.size) {
         Tower toReturn = new Tower((int)tower.pos.x, (int)tower.pos.y, tower.price, tower.towerColor, tower.directionColor);
-        
+
         return toReturn;
-      } //<>//
+      }
     }
 
     return null;
@@ -80,38 +117,6 @@ public class UI {
 
     for (int i = 0; i < towers.length; i++) {
       towers[i].drawTower();
-    }
-  }
-
-  private void drawButton(float x, float y, String text) {
-    float buttonWidth = width*0.1;
-    float buttonHeight = width*0.05;
-    color buttonBackground = color(52, 51, 46);
-    color buttonText = background;
-
-    //IF mouse over button, invert colors 
-    if (mouseX > calcX(x) && mouseX < calcX(x) + buttonWidth && mouseY > calcY(y) && mouseY < calcY(y) + buttonHeight) {
-      //background
-      stroke(buttonBackground);
-      fill(buttonText);
-      rect(calcX(x), calcY(y), buttonWidth, buttonHeight);
-
-      //label
-      textAlign(CENTER);
-      fill(buttonBackground);
-      text(text, calcX(x + buttonWidth/2), calcY(y + buttonHeight/1.5));
-    }
-    //draw button normally 
-    else {
-      //background
-      stroke(buttonBackground);
-      fill(buttonBackground);
-      rect(calcX(x), calcY(y), buttonWidth, buttonHeight);
-
-      //label
-      textAlign(CENTER);
-      fill(buttonText);
-      text(text, calcX(x + buttonWidth/2), calcY(y + buttonHeight/1.5));
     }
   }
 

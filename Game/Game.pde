@@ -12,7 +12,8 @@ List<Target> targets = new ArrayList<Target>();
 Set<Tower> towers = new HashSet<Tower>();
 Set<Bullet> bullets = new HashSet<Bullet>();
 
-Tower onMouseTower;
+Tower onMouseTower;//tower that is following the mouse, used when placing a tower after buying it
+Tower highlightedTower;//which tower is currently selected, used to determine which tower should be upgraded 
 
 int lives = 100;
 int money = 250;
@@ -133,14 +134,17 @@ void waveOfTargets() {
   wave++;
 }
 
-void mousePressed() {
+/**
+ * used after purchasing a tower so the tower follows the mouse so the user can place the tower on the map 
+ */
+void buyTowerAndPlace() {
   //IF tower can be added to mouse
   if (onMouseTower == null) {
     Tower newTower = ui.getTowerAtPos(mouseX, mouseY);
-    
+
     //checks for cuffcient funds 
-    if(newTower == null || money - newTower.price < 0) return;
-    
+    if (newTower == null || money - newTower.price < 0) return;
+
     onMouseTower = newTower;
   }
   //IF tower can be placed down onto map 
@@ -151,6 +155,46 @@ void mousePressed() {
   }
 }
 
+/**
+ * used to select a tower so that it can be upgraded 
+ */
+void highlightTower() {
+  //unhighlight currently highlighted tower
+  if (highlightedTower != null)
+    highlightedTower.towerHighlight = false;
+  highlightedTower = null;
+
+  //finds new tower to highlight 
+  for (Tower tower : towers) {
+    if (dist(mouseX, mouseY, tower.pos.x, tower.pos.y) <= tower.size) {
+      tower.towerHighlight = true;
+      highlightedTower = tower;
+      return;
+    }
+  }
+}
+
+void upgradeSelectedTowerSpeed() {
+  if (highlightedTower == null) return;
+  
+  highlightedTower.upgradeSpeed();
+}
+
+void upgradeSelectedTowerDamage() {
+  if (highlightedTower == null) return;
+  
+  highlightedTower.upgradeDamage();
+}
+
+void mousePressed() {
+  ui.clickedButtons(mouseX, mouseY);
+  buyTowerAndPlace();
+  highlightTower();
+}
+
 void keyPressed() {
+  //new wave of targets 
   if (key == ' ') waveOfTargets();
+  if (key == 's' || key == 'S') upgradeSelectedTowerSpeed();
+  if (key == 'd' || key == 'D') upgradeSelectedTowerDamage();
 }

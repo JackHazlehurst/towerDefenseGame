@@ -6,6 +6,9 @@ class Tower {
   private float direction = 0;
   private float size = width*0.025  ;
   private color towerColor, directionColor;
+  private boolean towerHighlight = false;
+  private float bulletDamage = 15;
+  private int bulletSpeed = 10;
 
   private Target currentTarget = null;
   private List<Target> targets;
@@ -14,6 +17,12 @@ class Tower {
   //data for bullet creation 
   private int lastBulletFrame = 0;//last frame a bullet was created 
   private int bulletFrameRate = 30;//after how many frames should a bullet be created 
+
+  //used to determine the upgrade paths for the tower 
+  private int currentSpeedLevel = 0;
+  private float[][] speedUpgrades = {{0.3, 75}, {0.25, 60}, {0.1, 50}};//percentage increase, and associated cost 
+  private int currentDamageLevel = 0;
+  private float[][] damageUpgrades = {{0.2, 75}, {0.25, 100}, {0.3, 120}};//percentage increase, and associated cost 
 
   public Tower(int x, int y, float range, color tower, color direction, List<Target> targetList, Set<Bullet> bulletSet) {
     pos = new PVector(x, y);
@@ -61,7 +70,7 @@ class Tower {
     if (frameCount - lastBulletFrame < bulletFrameRate)
       return;
 
-    bullets.add(new Bullet(new PVector(pos.x, pos.y), direction, 15));
+    bullets.add(new Bullet(new PVector(pos.x, pos.y), direction, bulletDamage, bulletSpeed));
     lastBulletFrame = frameCount;
   }
 
@@ -72,8 +81,13 @@ class Tower {
     pushMatrix();
 
     //draw tower
+    if (towerHighlight)
+      stroke(0);
+    else
+      noStroke();
+
+    strokeWeight(4);
     fill(towerColor);
-    noStroke();
     translate(pos.x, pos.y);
     ellipse(0, 0, 2*size, 2*size);
 
@@ -124,5 +138,37 @@ class Tower {
       return true;
 
     return false;
+  }
+
+  public boolean upgradeSpeed() {
+    if (currentSpeedLevel >= speedUpgrades.length) return false;//no upgrades left
+    
+    float upgradeCost = speedUpgrades[currentSpeedLevel][1];
+    float upgradePercentage = speedUpgrades[currentSpeedLevel][0];
+    
+    println(upgradeCost, upgradePercentage);
+    
+    if (money - upgradeCost < 0) return false;//insuffcient funds 
+
+    println(bulletFrameRate);
+    bulletFrameRate -= bulletFrameRate*upgradePercentage;
+    println(bulletFrameRate);
+    currentSpeedLevel++;
+    money -= upgradeCost;
+    return true;
+  }
+  
+  public boolean upgradeDamage() {
+    if (currentDamageLevel >= damageUpgrades.length) return false;//no upgrades left
+    
+    float upgradeCost = damageUpgrades[currentDamageLevel][1];
+    float upgradePercentage = damageUpgrades[currentDamageLevel][0];
+    
+    if (money - upgradeCost < 0) return false;//insuffcient funds 
+
+    bulletDamage += bulletDamage*upgradePercentage;
+    currentDamageLevel++;
+    money -= upgradeCost;
+    return true;
   }
 }
