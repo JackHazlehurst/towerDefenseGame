@@ -1,5 +1,5 @@
 class Tower {
-  private float RANGE;
+  private float RANGE = width*0.13;
 
   private PVector pos;
   private int price;
@@ -20,9 +20,9 @@ class Tower {
 
   //used to determine the upgrade paths for the tower 
   private int currentSpeedLevel = 0;
-  private float[][] speedUpgrades = {{0.3, 75}, {0.25, 60}, {0.1, 50}};//percentage increase, and associated cost 
+  private float[][] speedUpgrades = {{0.2, 50}, {0.25, 50}, {0.3, 50}};//percentage increase, and associated cost 
   private int currentDamageLevel = 0;
-  private float[][] damageUpgrades = {{0.2, 75}, {0.25, 100}, {0.3, 120}};//percentage increase, and associated cost 
+  private float[][] damageUpgrades = {{0.2, 50}, {0.25, 50}, {0.3, 50}};//percentage increase, and associated cost 
 
   public Tower(int x, int y, float range, color tower, color direction, List<Target> targetList, Set<Bullet> bulletSet) {
     pos = new PVector(x, y);
@@ -32,13 +32,18 @@ class Tower {
     towerColor = tower;
     directionColor = direction;
   }
-
-  //constructor for drawing the tower model that is not part of gameplay 
-  public Tower(int x, int y, int cost, color tower, color direction) {
-    pos = new PVector(x, y);
+  
+  /**
+  * useful for building towers that are part of the ui 
+  */
+  public Tower(int bulletDmg, int bulletFrames, int cost, color tower, color direction, List<Target> targetList, Set<Bullet> bulletSet) {
+    bulletDamage = bulletDmg;
+    bulletFrameRate = bulletFrames;
+    price = cost;
     towerColor = tower;
     directionColor = direction;
-    price = cost;
+    targets = targetList;
+    bullets = bulletSet;
   }
 
   /*

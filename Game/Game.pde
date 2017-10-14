@@ -14,10 +14,12 @@ Set<Bullet> bullets;
 Tower onMouseTower;//tower that is following the mouse, used when placing a tower after buying it
 Tower highlightedTower;//which tower is currently selected, used to determine which tower should be upgraded 
 
-int lives = 100;
-int money = 250;
-int wave = 0;
-int totalDamage = 0;
+int lives;
+int money;
+int wave;
+int totalDamage;
+int[] numberOfTargets;//haw many baloons to make of each type 
+boolean gameOver;
 
 int currentMap = 0;
 
@@ -41,7 +43,7 @@ void draw() {
   }
 
   //updates money
-  int damagePerMoney = 10;
+  int damagePerMoney = 5;
   while (totalDamage >= damagePerMoney) {
     money++;
     totalDamage -= damagePerMoney;
@@ -68,23 +70,33 @@ void draw() {
   }
 
   removeDead();
+
+  //game over
+  if(gameOver){
+    delay(3000);
+    resetGame();
+  }
+  checkGameOver();
 }
 
 void resetGame() {
   ui = new UI();
-  
+
   waveOfTargets = new ArrayList<Target>();
   targets = new ArrayList<Target>();
   towers = new HashSet<Tower>();
-  bullets = new HashSet<Bullet>();;
+  bullets = new HashSet<Bullet>();
 
   onMouseTower = null;
   highlightedTower = null;
 
-  lives = 100;
+  lives = 20;
   money = 250;
   wave = 0;
   totalDamage = 0;
+  gameOver = false;
+
+  numberOfTargets = new int[] {5, 2, 2};
 }
 
 void changeMap() {
@@ -111,7 +123,7 @@ void changeMap() {
     path.addPoint(width*0.7, height*0.7);
     path.addPoint(width*-0.05, height*0.7);
   }
-  
+
   resetGame();
 }
 
@@ -142,35 +154,46 @@ void waveOfTargets() {
   //cannot start a new wave while the other is still going
   if (!waveOfTargets.isEmpty() || !targets.isEmpty()) return;
 
-  int numberOfTargets = wave*5 + 12;
-  float weakProb = 0.8 - ((wave*2.0)/100);
-
-  println(wave, weakProb, numberOfTargets);
-
-  for (int i = 0; i < numberOfTargets; i++) {
-    float probability = (float)Math.random();
-
-    //slow, weak
-    if (probability < weakProb) {
-      int minHealth = 15;
-      int maxHealth = minHealth*3 + wave*2;
-      waveOfTargets.add(new Target(path, (int)random(minHealth, maxHealth), 0.8));
-    }
-    //medium, medium
-    if (probability < (1 - weakProb)*0.75) {
-      int minHealth = 40;
-      int maxHealth = 60 + wave*2;
-      waveOfTargets.add(new Target(path, (int)random(minHealth, maxHealth), 0.6));
-    }
-    //fast, string
-    if (probability < (1 - weakProb)*0.25) {
-      int minHealth = 80;
-      int maxHealth = 100 + wave*2;
-      waveOfTargets.add(new Target(path, (int)random(minHealth, maxHealth), 0.5));
+  for (int i = 0; i < numberOfTargets.length; i++) {
+    for (int j = 0; j < numberOfTargets[i]; j++) {
+      //slow, weak
+      if (i == 0 ) {
+        int minHealth = 15;
+        int maxHealth = minHealth*3 + wave*2;
+        waveOfTargets.add(new Target(path, (int)random(minHealth, maxHealth), 0.8 - (wave/20)));
+      }
+      //medium, medium
+      if (i == 1) {
+        int minHealth = 40;
+        int maxHealth = 60 + wave*2;
+        waveOfTargets.add(new Target(path, (int)random(minHealth, maxHealth), 0.6));
+      }
+      //fast, string
+      if (i == 2) {
+        int minHealth = 80;
+        int maxHealth = 100 + wave*2;
+        waveOfTargets.add(new Target(path, (int)random(minHealth, maxHealth), 0.5));
+      }
     }
   }
 
   wave++;
+
+  //increase the number of targets
+  numberOfTargets[0] *= 1.2 + wave*0.3;
+  numberOfTargets[1] *= 1.2 + wave*0.3;
+  numberOfTargets[2] *= 1.2 + wave*0.3;
+}
+
+void checkGameOver() {
+  //game not over 
+  if (lives > 0) return;
+
+  fill(255, 0, 0);
+  textSize(width*0.1);
+  text("Game Over!", width/2, height/2);
+  
+  gameOver = true;
 }
 
 /**
@@ -181,14 +204,14 @@ void buyTowerAndPlace() {
   if (onMouseTower == null) {
     Tower newTower = ui.getTowerAtPos(mouseX, mouseY);
 
-    //checks for cuffcient funds 
+    //checks for suffcient funds 
     if (newTower == null || money - newTower.price < 0) return;
 
     onMouseTower = newTower;
   }
   //IF tower can be placed down onto map 
   else if (onMouseTower != null) {
-    towers.add(new Tower(mouseX, mouseY, width*0.13, color(0, 0, 255), color(0, 255, 0), targets, bullets));
+    towers.add(onMouseTower);
     money -= onMouseTower.price;
     onMouseTower = null;
   }
