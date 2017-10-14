@@ -6,11 +6,10 @@ import java.util.*;
 UI ui;
 Path path;
 
-List<Target> waveOfTargets = new ArrayList<Target>();
-
-List<Target> targets = new ArrayList<Target>();
-Set<Tower> towers = new HashSet<Tower>();
-Set<Bullet> bullets = new HashSet<Bullet>();
+List<Target> waveOfTargets;
+List<Target> targets;
+Set<Tower> towers;
+Set<Bullet> bullets;
 
 Tower onMouseTower;//tower that is following the mouse, used when placing a tower after buying it
 Tower highlightedTower;//which tower is currently selected, used to determine which tower should be upgraded 
@@ -20,19 +19,14 @@ int money = 250;
 int wave = 0;
 int totalDamage = 0;
 
+int currentMap = 0;
+
 void setup() {
   //fullScreen();
   size(960, 540);
 
-  ui = new UI();
-  path = new Path();
-
-  path.addPoint(0, 0);
-  path.addPoint(width*0.2, height*0.2);
-  path.addPoint(width*0.3, height*0.4);
-  path.addPoint(width*0.2, height*0.6);
-  path.addPoint(width*0.45, height*0.9);
-  path.addPoint(width*0.7, height*0.6);
+  resetGame();
+  changeMap();
 }
 
 void draw() {
@@ -74,6 +68,51 @@ void draw() {
   }
 
   removeDead();
+}
+
+void resetGame() {
+  ui = new UI();
+  
+  waveOfTargets = new ArrayList<Target>();
+  targets = new ArrayList<Target>();
+  towers = new HashSet<Tower>();
+  bullets = new HashSet<Bullet>();;
+
+  onMouseTower = null;
+  highlightedTower = null;
+
+  lives = 100;
+  money = 250;
+  wave = 0;
+  totalDamage = 0;
+}
+
+void changeMap() {
+  int numPaths = 2;
+  path = new Path();
+
+  currentMap++;
+
+  if (currentMap % numPaths == 0) {
+    path.addPoint(width*-0.05, height*-0.05);
+    path.addPoint(width*0.2, height*0.2);
+    path.addPoint(width*0.3, height*0.4);
+    path.addPoint(width*0.2, height*0.6);
+    path.addPoint(width*0.45, height*0.9);
+    path.addPoint(width*0.7, height*0.6);
+    path.addPoint(width*0.6, height*0.2);
+    path.addPoint(width*0.5, height*-0.05);
+  } else if (currentMap % numPaths == 1) {
+    path.addPoint(width*0.5, height*1.05);
+    path.addPoint(width*0.25, height*0.6);
+    path.addPoint(width*0.15, height*0.4);
+    path.addPoint(width*0.05, height*0.15);
+    path.addPoint(width*0.7, height*0.15);
+    path.addPoint(width*0.7, height*0.7);
+    path.addPoint(width*-0.05, height*0.7);
+  }
+  
+  resetGame();
 }
 
 void removeDead() {
@@ -149,7 +188,7 @@ void buyTowerAndPlace() {
   }
   //IF tower can be placed down onto map 
   else if (onMouseTower != null) {
-    towers.add(new Tower(mouseX, mouseY, width*0.15, color(0, 0, 255), color(0, 255, 0), targets, bullets));
+    towers.add(new Tower(mouseX, mouseY, width*0.13, color(0, 0, 255), color(0, 255, 0), targets, bullets));
     money -= onMouseTower.price;
     onMouseTower = null;
   }
@@ -176,19 +215,19 @@ void highlightTower() {
 
 void upgradeSelectedTowerSpeed() {
   if (highlightedTower == null) return;
-  
+
   highlightedTower.upgradeSpeed();
 }
 
 void upgradeSelectedTowerDamage() {
   if (highlightedTower == null) return;
-  
+
   highlightedTower.upgradeDamage();
 }
 
 void mousePressed() {
-  ui.clickedButtons(mouseX, mouseY);
   buyTowerAndPlace();
+  ui.clickedButtons(mouseX, mouseY);
   highlightTower();
 }
 

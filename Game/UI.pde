@@ -17,8 +17,9 @@ public class UI { //<>//
 
     //creates buttons and adds them to a list 
     buttonList.add(new Button(calcX(width*0.025), calcY(width*0.1), "Speed", 0.5));//upgrade speed
-    buttonList.add(new Button(calcX(width*0.025), calcY(width*0.17), "Damage", 0.5));//upgrade damage
-    buttonList.add(new Button(calcX(width*0.025), calcY(width*0.5), "Next Wave", 0.38));//next wave of targets
+    buttonList.add(new Button(calcX(width*0.025), calcY(width*0.16), "Damage", 0.5));//upgrade damage
+    buttonList.add(new Button(calcX(width*0.025), calcY(width*0.44), "Next Wave", 0.38));//next wave of targets
+    buttonList.add(new Button(calcX(width*0.025), calcY(width*0.5), "Change Map", 0.35));//changes map
   }
 
   public void drawUI() {
@@ -37,8 +38,19 @@ public class UI { //<>//
     //money
     fill(34, 177, 76);
     text("$ " + money, calcX(width*0.05), calcY(width*0.08));
+    //currently selected tower stats 
+    fill(52, 51, 46);
+    textSize(width*0.015);
+    if (highlightedTower != null) {
+      text("Shooting Speed: " + highlightedTower.bulletFrameRate, calcX(width*0.01), calcY(width*0.25));
+      text("Bullet Damage: " + highlightedTower.bulletDamage, calcX(width*0.01), calcY(width*0.27));
+    } else {
+      text("No Tower Selected", calcX(width*0.01), calcY(width*0.25));
+    }
+    //current wave
+    text("Wave: " + wave, calcX(width*0.025), calcY(width*0.43));
 
-    drawTowersToBuy(width*0.4);
+    drawTowersToBuy(width*0.28);
 
     //draws buttons
     for (Button button : buttonList)
@@ -72,6 +84,8 @@ public class UI { //<>//
     //upgrade damage
     if (buttonClicked == 2)
       waveOfTargets();
+    if (buttonClicked == 3)
+      changeMap();
   }
 
   /**
@@ -87,7 +101,6 @@ public class UI { //<>//
         return toReturn;
       }
     }
-
     return null;
   }
 
@@ -104,7 +117,7 @@ public class UI { //<>//
     //vertical 
     rect(x + sizeL/2 - sizeS/2, y, sizeS, sizeL);
     //horizontal 
-    rect(x, y + sizeL/2 - sizeS/2, sizeL, sizeS);
+    //rect(x, y + sizeL/2 - sizeS/2, sizeL, sizeS);
 
     //draw towers 
     float startX = x + sizeL*0.25;
@@ -112,12 +125,38 @@ public class UI { //<>//
 
     towers = new Tower[2];
 
-    towers[0] = new Tower((int)startX, (int)startY, 150, color(0, 0, 255), color(0, 255, 0));
-    towers[1] = new Tower((int)(startX + sizeL*0.5), 200, (int)startY, color(255, 0, 0), color(0));
-
     for (int i = 0; i < towers.length; i++) {
+      int xTower = (int)(startX  + sizeL*0.5*i);
+      int yTower = (int)startY;
+
+      println();
+
+      towers[i] = new Tower(xTower, yTower, 150, color(0, 0, 255), color(0, 255, 0));
       towers[i].drawTower();
+
+      //description
+      fill(52, 51, 46);
+      text("$" + towers[i].price, xTower*0.975, yTower*1.15);
+
+      if (dist(mouseX, mouseY, towers[i].pos.x, towers[i].pos.y) < towers[i].size) 
+        statsBox(mouseX, mouseY, towers[i].bulletFrameRate, towers[i].bulletDamage);
     }
+  }
+
+  private void statsBox(int x, int y, float speed, float damage) {
+    float size = width*0.05;
+    float xTop = x - 2*size;
+    float yTop = y - size;
+
+    //box
+    fill(52, 51, 46, 127);
+    noStroke();
+    rect(xTop, yTop, 2*size, size);
+
+    //text
+    fill(background);
+    text("Speed: " + speed, xTop*1.005, yTop*1.05);
+    text("Damage: " + damage, xTop*1.005, yTop*1.12);
   }
 
   /**
